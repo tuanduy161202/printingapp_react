@@ -151,12 +151,14 @@ function OrderCard({ history }) {
             .then(data => {
                 setOpen(false);
                 const totalPages = ((config.custom_print === "Print all Pages") ? document.pages : (config.pages[1] - config.pages[0] + 1));
-
+                console.log(config.copies);
                 setGlobalVariable({
                     name: globalVariable.name,
                     avatar: globalVariable.avatar,
                     balance: globalVariable.balance + config.copies * totalPages
                 });
+            })
+            .then(() => {
                 window.location.reload();
             })
             .catch(error => console.error('Error updating document:', error));
@@ -216,7 +218,7 @@ function OrderCard({ history }) {
       <CardMedia 
         component="img"
         sx={{ width: 151 }}
-        image={"public/img/pdf.png"}
+        image={"img/pdf.png"}
         alt="Document"
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
