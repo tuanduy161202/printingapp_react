@@ -218,7 +218,7 @@ function OrderCard({ history }) {
       <CardMedia 
         component="img"
         sx={{ width: 151 }}
-        image={"img/pdf.png"}
+        image={"img/fileAva/img4.png"}
         alt="Document"
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
