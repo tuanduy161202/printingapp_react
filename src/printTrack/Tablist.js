@@ -155,7 +155,7 @@ function OrderCard({ history }) {
                 setGlobalVariable({
                     name: globalVariable.name,
                     avatar: globalVariable.avatar,
-                    balance: globalVariable.balance + totalPages
+                    balance: globalVariable.balance + config.copies * totalPages
                 });
                 window.location.reload();
             })
@@ -237,7 +237,7 @@ function OrderCard({ history }) {
                 {history.status === "inqueue" ? <p>Tình trạng: Đang đợi </p> : history.status === "printing" ? <p>Tình trạng: Đang in </p> : history.status === "printed" ? <p>Tình trạng: Chờ xác nhận </p> : <p>Tình trạng: Đã xác nhận</p>}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary" component="div">
-                Thời gian in: {moment(history.created_at).format('DD/MM/YYYY')}
+                Số bản sao: {config? config.copies : ""}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary" component="div">
                 Máy in: {printer ? ("Máy " + printer.code + ", Loại: " + printer.type + ", Cơ sở: " + printer.campus + ", Tòa: " + printer.building + ", Tầng: " + printer.level) : ""}
