@@ -12,6 +12,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import configs from '../configs/api_config';
+import { useGlobalState } from '../GlobalStateContext';
 import { Button, CardActions, CardHeader, CardMedia } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 const moment = require('moment');
@@ -98,7 +99,8 @@ function OrderCard({ history }) {
     const [config, setConfig] = React.useState('')
     const [open, setOpen] = React.useState(false);
     const [hover, setHover] = React.useState(false);
-    
+    const [printer, setPrinter] = React.useState('');
+    const { globalVariable, setGlobalVariable } = useGlobalState();
   const handleDeleteClick = () => {
     setOpen(true);
   };
@@ -148,26 +150,58 @@ function OrderCard({ history }) {
             .then(response => response.json())
             .then(data => {
                 setOpen(false);
+                const totalPages = ((config.custom_print === "Print all Pages") ? document.pages : (config.pages[1] - config.pages[0] + 1));
+
+                setGlobalVariable({
+                    name: globalVariable.name,
+                    avatar: globalVariable.avatar,
+                    balance: globalVariable.balance + totalPages
+                });
                 window.location.reload();
             })
             .catch(error => console.error('Error updating document:', error));
         
     };
 
-  const handleConfirmClick = () => {
-
+    const handleConfirmClick = () => {
+        const updateHis = {
+            document_id: history.document_id,
+            config_id: history.config_id,
+            finish_date: history.finish_date,
+            status: 'done',
+        }
+        fetch(configs.baseAPI + configs.updateHisAPI + history._id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateHis),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('History updated: ', data);
+                window.location.reload();
+            })
+            .catch(error => console.error('Error updating user:', error));
     };
     React.useEffect(() => {
         fetch(configs.baseAPI + configs.getAllDocAPI + history.document_id)
             .then(response => response.json())
             .then(doc => {
                 setDocument(doc.data);
+                console.log(doc);
             })
             .catch(error => console.error('Error fetching documents:', error));
         fetch(configs.baseAPI + configs.getPrtConfigByIdAPI + history.config_id)
             .then(response => response.json())
             .then(data => {
                 setConfig(data.data)
+                fetch(configs.baseAPI + configs.getPrinterAPI + data.data.printer)
+                    .then(response => response.json())
+                    .then(printer => {
+                        setPrinter(printer.data);
+                    })
+                    .catch(error => console.error('Error fetching documents:', error));
             })
             .catch(error => console.error('Error fetching documents:', error));
     }, []);
@@ -182,17 +216,17 @@ function OrderCard({ history }) {
       <CardMedia 
         component="img"
         sx={{ width: 151 }}
-        image={"img/fileAva/img4.png"}
+        image={"public/img/pdf.png"}
         alt="Document"
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
         <CardContent sx={{ flex: '1 0 auto', display: 'flex', flexDirection: 'row' }}>
           <Box sx={{ flex: '1 1 auto' }}>
             <Typography component="h5" variant="h5">
-              Tài liệu: {document.name}
+              Tài liệu: {document? document.name: ""}
             </Typography>
-            <Typography variant="subtitle1" color="text.secondary" component="div">
-              Số trang in: {document.pages}
+                          <Typography variant="subtitle1" color="text.secondary" component="div">
+                              Số trang in: {(config&&document)? ((config.custom_print === "Print all Pages") ? document.pages : (config.pages[1] - config.pages[0]+1)) : 0}
             </Typography>
           </Box>
           <Box sx={{ flex: '1 1 auto' }}>
@@ -200,10 +234,13 @@ function OrderCard({ history }) {
               Thời gian in: {moment(history.created_at).format('DD/MM/YYYY')}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary" component="div">
-                              {history.status === "inqueue" ? <p>Tình trạng: Đang đợi </p> : history.status === "printing" ? <p>Tình trạng: Đang in </p> : history.status === "printed" ? <p>Tình trạng: Chờ xác nhận </p> : <p>Tình trạng: Đã xác nhận</p>}
+                {history.status === "inqueue" ? <p>Tình trạng: Đang đợi </p> : history.status === "printing" ? <p>Tình trạng: Đang in </p> : history.status === "printed" ? <p>Tình trạng: Chờ xác nhận </p> : <p>Tình trạng: Đã xác nhận</p>}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary" component="div">
-              Máy in: {config.printer}
+                Thời gian in: {moment(history.created_at).format('DD/MM/YYYY')}
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary" component="div">
+                Máy in: {printer ? ("Máy " + printer.code + ", Loại: " + printer.type + ", Cơ sở: " + printer.campus + ", Tòa: " + printer.building + ", Tầng: " + printer.level) : ""}
             </Typography>
             
           </Box>

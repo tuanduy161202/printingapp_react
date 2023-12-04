@@ -135,6 +135,9 @@ export function PrintConfirm() {
                         <div>
                             <p>Số bản sao: {printconfigs.copies}</p>
                             <p>Chọn trang in: {printconfigs.custom_print}</p>
+                            {
+                                (printconfigs.custom_print === "Custom Print") && <p>In trang: {printconfigs.pages[0]}-{printconfigs.pages[1]}</p>
+                            }
                             <p>Số mặt in: {printconfigs.print_side}</p>
                             <p>Hướng giấy: {printconfigs.orientation}</p>
                             <p>Khổ giấy: {printconfigs.page_size}</p>

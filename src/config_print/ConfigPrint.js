@@ -156,15 +156,18 @@ const ConfigPrint = () => {
                                 <select id="customprint" value={selectedCustomPrint} onChange={handleCustomPrintChange} className="custom-select" disabled={!oneDoc}>
                                     <option value="Nohing" hidden>{" "}</option>
                                     <option value="Print all Pages">Print all Pages</option>
-                                    <option value="Print selection">Print selection</option>
+                                    <option value="Custom Print">Custom Print</option>
                                 </select>
                             </div>
                         </div>
-                        <div className='col-2'>
-                            <label htmlFor="numberPage">Pages:</label>
-                        </div>
                         {
-                            (selectedCustomPrint === "Print selection") && (
+                            (selectedCustomPrint === "Custom Print") && (
+                            <div className='col-2'>
+                                <label htmlFor="numberPage">Pages:</label>
+                            </div>)
+                        }
+                        {
+                            (selectedCustomPrint === "Custom Print") && (
                                 <div className='col-10'>
                                     <div style={{ display: 'flex' }}>
                                         <input

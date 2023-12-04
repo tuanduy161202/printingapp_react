@@ -12,6 +12,7 @@ const configs = {
     delPrtConfigByIdAPI: "/printconfig/delete/",
     createHistoryAPI: '/history/create/',
     getHisByStatusAPI: '/history/status/',
+    updateHisAPI: '/history/update/',
     getHisByIdAPI: '/history/',
     delHisByIdAPI: "/history/delete/",
     getPrinterAPI: "/printer/",
